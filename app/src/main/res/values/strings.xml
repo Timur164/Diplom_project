@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Diplom Project</string>
+    <string name="recognition_road_sign">Распознавание дорожных знаков</string>
+    <string name="title_activity_base">BaseActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="selection_section">Выбор раздела</string>
+    <string name="galery">Галерея</string>
+    <string name="camera">Камера</string>
+</resources>
