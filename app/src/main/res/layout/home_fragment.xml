@@ -24,4 +24,19 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="@string/recognition_road_sign" />
+
+    <Button
+        android:id="@+id/road_sign_image_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/recognition_road_sign_image" />
+
+
+    <Button
+        android:id="@+id/pedestrian_image_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/pedestrian" />
 </LinearLayout>

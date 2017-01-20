@@ -9,9 +9,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
-/**
- * Created by Timyr on 07.01.2017.
- */
+
 
 public class ConvertInBackground extends AsyncTask<Void, Void, Void> {
     private ImageView imageView;

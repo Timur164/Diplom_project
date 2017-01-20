@@ -19,14 +19,17 @@ import com.timyr.opencv_demo.controller.BaseFragment;
 import java.io.File;
 
 public class HomeFragment extends BaseFragment implements View.OnClickListener {
-    private Button roadSignButton;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_fragment, container, false);
-        roadSignButton = (Button) view.findViewById(R.id.road_sign_button);
+        Button roadSignButton = (Button) view.findViewById(R.id.road_sign_button);
+        Button roadSignImageButton = (Button) view.findViewById(R.id.road_sign_image_button);
+        Button pedestrianImageButton = (Button) view.findViewById(R.id.pedestrian_image_button);
         roadSignButton.setOnClickListener(this);
+        roadSignImageButton.setOnClickListener(this);
+        pedestrianImageButton.setOnClickListener(this);
         return view;
     }
 
@@ -36,8 +39,17 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         switch (id) {
             case R.id.road_sign_button:
 //                openApp(getActivity(),"com.timyr.p0083_menu261566_test");
-                RoadSignFragment roadSignFragment=new RoadSignFragment();
+                RoadSignFragment roadSignFragment = new RoadSignFragment();
                 showFragmentWithBackStack(roadSignFragment);
+                break;
+            case R.id.road_sign_image_button:
+                RoadSignImageFragment roadSignImageFragment = new RoadSignImageFragment();
+                showFragmentWithBackStack(roadSignImageFragment);
+                break;
+            case R.id.pedestrian_image_button:
+                PedestrianFragment pedestrianFragment = new PedestrianFragment();
+                showFragmentWithBackStack(pedestrianFragment);
+                break;
         }
     }
 
