@@ -11,4 +11,9 @@
     <string name="recognition_road_sign_image">Распозанвание дорожных знаков(по картинке)</string>
     <string name="select_photo">Кликните и выберете фотографию</string>
     <string name="pedestrian">Распознавание пешеходов(по картинке)</string>
+    <string name="many_detectors">Разлиные детекторы</string>
+    <string name="attention">Внимание</string>
+    <string name="choose_photo_loaded">Выберете откуда будет загружена фотка</string>
+    <string name="cancel">Отмена</string>
+    <string name="photo_not_correct">Данная фотография не подходит.Выберете другую.</string>
 </resources>

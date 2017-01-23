@@ -1,10 +1,15 @@
 package com.timyr.opencv_demo.fragments;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,22 +24,16 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfDouble;
-import org.opencv.core.MatOfFloat;
-import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.HOGDescriptor;
 
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -43,25 +42,61 @@ public class RoadSignImageFragment extends BaseFragment implements View.OnClickL
 
     private ImageView imageView;
     public static final int REQUEST_CODE_GALLERY = 100;
+    public static final int REQUEST_CODE_CAMERA = 200;
+    private Uri uri;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.road_sign_image_fragment, container, false);
+        //Инициальизируем данные из layout
         imageView = (ImageView) view.findViewById(R.id.roadImageView);
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setOnClickListener(this);
         return view;
     }
 
+    protected void onCreateDialog() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+        adb.setTitle(R.string.attention);
+        adb.setMessage(R.string.choose_photo_loaded);
+        adb.setIcon(android.R.drawable.ic_dialog_info);
+        adb.setPositiveButton(R.string.galery, myClickListener);
+        adb.setNegativeButton(R.string.camera, myClickListener);
+        adb.setNeutralButton(R.string.cancel, myClickListener);
+        adb.show();
+    }
 
+    DialogInterface.OnClickListener myClickListener = new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                // положительная кнопка
+                case Dialog.BUTTON_POSITIVE:
+                    Intent gallery = new Intent(Intent.ACTION_PICK);
+                    gallery.setType("image/*");
+                    startActivityForResult(gallery, REQUEST_CODE_GALLERY);
+                    break;
+                // негативная кнопка
+                case Dialog.BUTTON_NEGATIVE:
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    uri = generateFileUri();
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                    startActivityForResult(intent, REQUEST_CODE_CAMERA);
+                    break;
+                // нейтральная кнопка
+                case Dialog.BUTTON_NEUTRAL:
+                    dialog.dismiss();
+                    break;
+            }
+        }
+    };
+
+    //Слушатель нажатий
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.toolbar:
-                Intent gallery = new Intent(Intent.ACTION_PICK);
-                gallery.setType("image/*");
-                startActivityForResult(gallery, REQUEST_CODE_GALLERY);
+                onCreateDialog();
                 break;
         }
     }
@@ -70,20 +105,41 @@ public class RoadSignImageFragment extends BaseFragment implements View.OnClickL
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
+                //Галерея
                 case REQUEST_CODE_GALLERY:
                     Uri selectedImageUri = data.getData();
-
-//                    imageView.setImageBitmap(selectedImageUri);
-                    try {
-                        InputStream imageStream = getActivity().getContentResolver().openInputStream(selectedImageUri);
-                        final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                        Bitmap bitmapTest = peopleDetect(selectedImage);
-                        imageView.setImageBitmap(bitmapTest);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                        Log.e("my", "error set image: " + e.getMessage());
+                    if (selectedImageUri != null) {
+                        try {
+                            InputStream imageStream = getActivity().getContentResolver().openInputStream(selectedImageUri);
+                            BitmapFactory.Options opts = new BitmapFactory.Options();
+                            opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                            Bitmap bitmapTest = findObject(BitmapFactory.decodeStream(imageStream, null, opts));
+                            imageView.setImageBitmap(bitmapTest);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                            Log.e("my", "error set image: " + e.getMessage());
+                        }
+                    } else {
+                        toast(getString(R.string.photo_not_correct));
                     }
-
+                    break;
+                //Камера
+                case REQUEST_CODE_CAMERA:
+                    Uri imageCameraUri = uri;
+                    if (imageCameraUri != null) {
+                        try {
+                            InputStream imageStream = getActivity().getContentResolver().openInputStream(imageCameraUri);
+                            BitmapFactory.Options opts = new BitmapFactory.Options();
+                            opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                            Bitmap bitmapTest = findObject(BitmapFactory.decodeStream(imageStream, null, opts));
+                            imageView.setImageBitmap(bitmapTest);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                            Log.e("my", "error set image: " + e.getMessage());
+                        }
+                    } else {
+                        toast(getString(R.string.photo_not_correct));
+                    }
                     break;
             }
         }
@@ -102,7 +158,6 @@ public class RoadSignImageFragment extends BaseFragment implements View.OnClickL
         public void onManagerConnected(int status) {
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS: {
-                    Log.i("my", "OpenCV loaded successfully");
                 }
                 break;
                 default: {
@@ -114,78 +169,70 @@ public class RoadSignImageFragment extends BaseFragment implements View.OnClickL
     };
 
 
-    public Bitmap peopleDetect(Bitmap bitmaps) {
-        Bitmap bitmap = null;
-        float execTime;
-        try {
-            // Закачиваем фотографию
+    public Bitmap findObject(Bitmap bitmap) {
+        //Конвертируем Bitmap в Mat
+        Mat mat = new Mat(bitmap.getWidth(), bitmap.getHeight(),
+                CvType.CV_8UC1);
+        Mat grayMat = new Mat(bitmap.getWidth(), bitmap.getHeight(),
+                CvType.CV_8UC1);
+        Utils.bitmapToMat(bitmap, mat);
+        // Добавляем оттенок серого
+        int colorChannels = (mat.channels() == 3) ? Imgproc.COLOR_BGR2GRAY
+                : ((mat.channels() == 4) ? Imgproc.COLOR_BGRA2GRAY : 1);
 
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            connection.setDoInput(true);
-//            connection.connect();
-//            InputStream input = connection.getInputStream();
-//            BitmapFactory.Options opts = new BitmapFactory.Options();
-//            opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
-//            InputStream imageStream = getActivity().getContentResolver().openInputStream(url);
-            bitmap = bitmaps;
-            long time = System.currentTimeMillis();
-            // Создаем матрицу изображения для OpenCV и помещаем в нее нашу фотографию
-            Mat mat = new Mat();
-            Utils.bitmapToMat(bitmap, mat);
-            // Переконвертируем матрицу с RGB на градацию серого
-            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY, 4);
-            HOGDescriptor hog = new HOGDescriptor();
-            //Получаем стандартный определитель людей и устанавливаем его нашему дескриптору
-            MatOfFloat descriptors = HOGDescriptor.getDefaultPeopleDetector();
-            hog.setSVMDetector(descriptors);
-            // Определяем переменные, в которые будут помещены результаты поиска ( locations - прямоугольные области, weights - вес (можно сказать релевантность) соответствующей локации)
-            MatOfRect locations = new MatOfRect();
-            MatOfDouble weights = new MatOfDouble();
-            // Собственно говоря, сам анализ фотографий. Результаты запишутся в locations и weights
-            hog.detectMultiScale(mat, locations, weights);
-            execTime = ((float) (System.currentTimeMillis() - time)) / 1000f;
-            //Переменные для выделения областей на фотографии
-            Point rectPoint1 = new Point();
-            Point rectPoint2 = new Point();
-            Scalar fontColor = new Scalar(0, 0, 0);
-            Point fontPoint = new Point();
-            // Если есть результат - добавляем на фотографию области и вес каждой из них
-            if (locations.rows() > 0) {
-                List<Rect> rectangles = locations.toList();
-                int i = 0;
-                List<Double> weightList = weights.toList();
-                for (Rect rect : rectangles) {
-                    float weigh = weightList.get(i++).floatValue();
+        Imgproc.cvtColor(mat, grayMat, colorChannels);
+        // Уменьшаем шум, чтобы мы избежать ложного обнаружения
+        Imgproc.GaussianBlur(grayMat, grayMat, new Size(9, 9), 2, 2);
+        // Накапливающие значение.Влияет на поиск знаков
+        double dp = 1.2d;
+        // Минимальное расстояние между центром координаты обнаруженных кругов
+        double minDist = 100;
+        // Минимальные и Максимальные радиусы
+        int minRadius = 30, maxRadius = 1000;
+        // Param1 = Градиент значение, которое используется для обработки края обнаружения
+        // Param2 = Накопитель пороговое значение для Метод cv2.CV_HOUGH_GRADIENT.
+        double param1 = 80, param2 = 120;
+        // Объект для хранения обнаруженных объектов
+        Mat object = new Mat(bitmap.getWidth(),
+                bitmap.getHeight(), CvType.CV_8UC1);
 
-                    rectPoint1.x = rect.x;
-                    rectPoint1.y = rect.y;
-                    fontPoint.x = rect.x;
-                    fontPoint.y = rect.y - 4;
-                    rectPoint2.x = rect.x + rect.width;
-                    rectPoint2.y = rect.y + rect.height;
-                    final Scalar rectColor = new Scalar(0, 0, 0);
-                    // Добавляем на изображения найденную информацию
-                    Imgproc.rectangle(mat, rectPoint1, rectPoint2, rectColor, 2);
-                    Imgproc.putText(mat,
-                            String.format("%1.2f", weigh),
-                            fontPoint, Core.FONT_HERSHEY_PLAIN, 1.5, fontColor,
-                            2, Core.LINE_AA, false);
-
-                }
-            }
-            fontPoint.x = 15;
-            fontPoint.y = bitmap.getHeight() - 20;
-            // Добавляем дополнительную отладочную информацию
-            Imgproc.putText(mat,
-                    "Processing time:" + execTime + " width:" + bitmap.getWidth() + " height:" + bitmap.getHeight() ,
-                    fontPoint, Core.FONT_HERSHEY_PLAIN, 1.5, fontColor,
-                    2, Core.LINE_AA, false);
-            Utils.matToBitmap(mat, bitmap);
-            URL url = new URL("");
-        } catch (IOException e) {
-            e.printStackTrace();
+        //Поиск объектов на картинке
+        Imgproc.HoughCircles(grayMat, object,
+                Imgproc.CV_HOUGH_GRADIENT, dp, minDist, param1,
+                param2, minRadius, maxRadius);
+        //Число обнаруженных объектов
+        int numberOfObjects = (object.rows() == 0) ? 0 : object.cols();
+        //Цикл для выделения найденных объектов
+        for (int i = 0; i < numberOfObjects; i++) {
+            double[] circleCoordinates = object.get(0, i);
+            int x = (int) circleCoordinates[0], y = (int) circleCoordinates[1];
+            Point center = new Point(x, y);
+            int radius = (int) circleCoordinates[2];
+            Imgproc.circle(mat, center, radius, new Scalar(0,
+                    255, 0), 4);
+            // центр очертание
+            Imgproc.rectangle(mat, new Point(x - 5, y - 5),
+                    new Point(x + 5, y + 5),
+                    new Scalar(0, 128, 255), -1);
         }
+        Log.e("my", "numberOfCircles: " + numberOfObjects);
+        //Конвертирование в Bitmap
+        Utils.matToBitmap(mat, bitmap);
         return bitmap;
     }
 
+    // Запись в файл фотки сделанной на камеру
+    private Uri generateFileUri() {
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+            return null;
+        File path = new File(Environment.getExternalStorageDirectory(), "CameraTest");
+        if (!path.exists()) {
+            if (!path.mkdirs()) {
+                return null;
+            }
+        }
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        File newFile = new File(path.getPath() + File.separator + timeStamp + ".jpg");
+        return Uri.fromFile(newFile);
+    }
 }

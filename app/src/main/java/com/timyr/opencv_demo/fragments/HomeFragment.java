@@ -1,12 +1,8 @@
 package com.timyr.opencv_demo.fragments;
 
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.timyr.opencv_demo.R;
+import com.timyr.opencv_demo.SmartObjectRecognitionActivity;
 import com.timyr.opencv_demo.controller.BaseFragment;
-
-import java.io.File;
 
 public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
@@ -27,9 +22,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         Button roadSignButton = (Button) view.findViewById(R.id.road_sign_button);
         Button roadSignImageButton = (Button) view.findViewById(R.id.road_sign_image_button);
         Button pedestrianImageButton = (Button) view.findViewById(R.id.pedestrian_image_button);
+        Button manyDetectorsButton = (Button) view.findViewById(R.id.capabilities_OpenCv_button);
         roadSignButton.setOnClickListener(this);
         roadSignImageButton.setOnClickListener(this);
         pedestrianImageButton.setOnClickListener(this);
+        manyDetectorsButton.setOnClickListener(this);
         return view;
     }
 
@@ -38,7 +35,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         int id = v.getId();
         switch (id) {
             case R.id.road_sign_button:
-//                openApp(getActivity(),"com.timyr.p0083_menu261566_test");
                 RoadSignFragment roadSignFragment = new RoadSignFragment();
                 showFragmentWithBackStack(roadSignFragment);
                 break;
@@ -50,26 +46,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                 PedestrianFragment pedestrianFragment = new PedestrianFragment();
                 showFragmentWithBackStack(pedestrianFragment);
                 break;
+            case R.id.capabilities_OpenCv_button:
+                Intent intent=new Intent(getActivity(),SmartObjectRecognitionActivity.class);
+                startActivity(intent);
+                break;
         }
-    }
-
-    //ZTE открытие новго приложения.
-    public static boolean openApp(Context context, String packageName) {
-        PackageManager manager = context.getPackageManager();
-        Intent i = manager.getLaunchIntentForPackage(packageName);
-        if (i == null) {
-            File sdCard = Environment.getExternalStorageDirectory();
-            String fileStr = sdCard.getAbsolutePath() + "/Download";// + "ixat-release.apk";
-            File file = new File(fileStr, "ixat-release.apk");
-            Intent promptInstall = new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.fromFile(file),
-                    "application/vnd.android.package-archive");
-
-            context.startActivity(promptInstall);
-            return false;
-            //throw new PackageManager.NameNotFoundException();
-        }
-        i.addCategory(Intent.CATEGORY_LAUNCHER);
-        context.startActivity(i);
-        return true;
     }
 }
