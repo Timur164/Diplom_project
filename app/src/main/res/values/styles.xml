@@ -13,6 +13,10 @@
         <item name="android:windowActionBarOverlay">true</item>
     </style>
 
+    <style name="SplashVisible">
+        <item name="android:visibility">visible</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

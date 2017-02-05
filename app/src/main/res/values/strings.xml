@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Diplom Project</string>
+    <string name="app_name">Знакодетектор</string>
     <string name="recognition_road_sign">Распознавание дорожных знаков</string>
     <string name="title_activity_base">BaseActivity</string>
 
@@ -9,7 +9,7 @@
     <string name="galery">Галерея</string>
     <string name="camera">Камера</string>
     <string name="recognition_road_sign_image">Распозанвание дорожных знаков(по картинке)</string>
-    <string name="select_photo">Кликните и выберете фотографию</string>
+    <string name="select_photo">Кликните и выберете изображение</string>
     <string name="pedestrian">Распознавание пешеходов(по картинке)</string>
     <string name="many_detectors">Разлиные детекторы</string>
     <string name="attention">Внимание</string>

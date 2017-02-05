@@ -78,10 +78,6 @@ public class SmartObjectRecognitionActivity extends Activity implements View.OnT
                 case LoaderCallbackInterface.SUCCESS:
                 {
                     Log.i(TAG, "OpenCV loaded successfully");
-
-                    // Load native library after(!) OpenCV initialization
-//                    System.loadLibrary("SmartObjectRecognition");
-
                     mOpenCvCameraView.enableFpsMeter();
                     mOpenCvCameraView.enableView();
                     mOpenCvCameraView.setOnTouchListener(SmartObjectRecognitionActivity.this);

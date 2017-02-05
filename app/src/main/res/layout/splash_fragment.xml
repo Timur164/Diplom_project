@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#edd9cdcd"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imageSplasheCamera"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="130dp"
+        android:background="@drawable/ic_camera" />
+
+    <TextView
+        android:id="@+id/nameApp"
+        style="@style/SplashVisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageSplasheCamera"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textColor="@color/colorBorderGrey"
+        android:textSize="20sp" />
+
+
+    <TextView
+        android:id="@+id/tvLoading"
+        style="@style/SplashVisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="Загузка..."
+        android:textColor="@color/colorBorderGrey"
+        android:textSize="14sp" />
+
+</RelativeLayout>

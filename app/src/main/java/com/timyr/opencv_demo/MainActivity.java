@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.Window;
 
 import com.timyr.opencv_demo.controller.BaseActivity;
-import com.timyr.opencv_demo.fragments.HomeFragment;
+import com.timyr.opencv_demo.fragments.SplashFragment;
 
 import org.opencv.android.OpenCVLoader;
 
@@ -32,11 +32,11 @@ public class MainActivity extends BaseActivity {
         progressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         progressDialog.getWindow().setBackgroundDrawableResource(R.color.colorBorderGrey);
         progressDialog.setContentView(view);
-        HomeFragment homeFragment = new HomeFragment();
+        SplashFragment homeFragment = new SplashFragment();
         showFragment(homeFragment);
     }
 
-    //ZTE Проверка на подключенность библиотеки.
+    //Проверка на подключенность библиотеки.
     static {
         if (!OpenCVLoader.initDebug()) {
             Log.i("my", "OpenCV initialization failed");
@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    //ZTE Метод для отображения прогресс диалога.
+    //Метод для отображения прогресс диалога.
     public void showProgressDialog(boolean check) {
         if (check) {
             progressDialog.show();
