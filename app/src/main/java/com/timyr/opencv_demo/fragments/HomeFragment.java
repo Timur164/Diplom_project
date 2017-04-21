@@ -12,6 +12,7 @@ import android.widget.Button;
 import com.timyr.opencv_demo.R;
 import com.timyr.opencv_demo.SmartObjectRecognitionActivity;
 import com.timyr.opencv_demo.controller.BaseFragment;
+import com.timyr.opencv_demo.controller.CannyController;
 
 public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
@@ -23,10 +24,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         Button roadSignImageButton = (Button) view.findViewById(R.id.road_sign_image_button);
         Button pedestrianImageButton = (Button) view.findViewById(R.id.pedestrian_image_button);
         Button manyDetectorsButton = (Button) view.findViewById(R.id.capabilities_OpenCv_button);
+        Button test_btn = (Button) view.findViewById(R.id.test_btn);
+        Button test_btn_2 = (Button) view.findViewById(R.id.test_btn_2);
+        Button test_btn_video = (Button) view.findViewById(R.id.test_btn_video);
         roadSignButton.setOnClickListener(this);
         roadSignImageButton.setOnClickListener(this);
         pedestrianImageButton.setOnClickListener(this);
         manyDetectorsButton.setOnClickListener(this);
+        test_btn.setOnClickListener(this);
+        test_btn_2.setOnClickListener(this);
+        test_btn_video.setOnClickListener(this);
         return view;
     }
 
@@ -43,12 +50,24 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                 showFragmentWithBackStack(roadSignImageFragment);
                 break;
             case R.id.pedestrian_image_button:
-                PedestrianFragment pedestrianFragment = new PedestrianFragment();
+                CannyController pedestrianFragment = new CannyController();
                 showFragmentWithBackStack(pedestrianFragment);
                 break;
             case R.id.capabilities_OpenCv_button:
-                Intent intent=new Intent(getActivity(),SmartObjectRecognitionActivity.class);
+                Intent intent = new Intent(getActivity(), SmartObjectRecognitionActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.test_btn:
+                TestFragment testFragment = new TestFragment();
+                showFragmentWithBackStack(testFragment);
+                break;
+            case R.id.test_btn_2:
+                TestMat_BitmapFragment testFragment_2 = new TestMat_BitmapFragment();
+                showFragmentWithBackStack(testFragment_2);
+                break;
+            case R.id.test_btn_video:
+                TestVideoFragment testVideoFragment = new TestVideoFragment();
+                showFragmentWithBackStack(testVideoFragment);
                 break;
         }
     }

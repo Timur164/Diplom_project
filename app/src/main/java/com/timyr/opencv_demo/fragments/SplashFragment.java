@@ -24,7 +24,7 @@ public class SplashFragment extends BaseFragment{
                 HomeFragment homeFragment = new HomeFragment();
                 showFragment(homeFragment);
             }
-        },5000);
+        },2000);
         return view;
     }
 

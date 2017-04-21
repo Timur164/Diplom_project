@@ -47,5 +47,24 @@
         android:layout_margin="10dp"
         android:text="@string/pedestrian" />
 
+    <Button
+        android:id="@+id/test_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="test_1" />
 
+    <Button
+        android:id="@+id/test_btn_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Обработка изображений Mat " />
+
+    <Button
+        android:id="@+id/test_btn_video"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Тест видео" />
 </LinearLayout>
