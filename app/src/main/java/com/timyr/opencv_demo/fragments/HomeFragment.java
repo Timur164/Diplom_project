@@ -8,7 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.VideoView;
 
+import com.timyr.opencv_demo.CameraActivity;
+import com.timyr.opencv_demo.PhotoActivity;
 import com.timyr.opencv_demo.R;
 import com.timyr.opencv_demo.SmartObjectRecognitionActivity;
 import com.timyr.opencv_demo.controller.BaseFragment;
@@ -24,6 +27,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         Button roadSignImageButton = (Button) view.findViewById(R.id.road_sign_image_button);
         Button pedestrianImageButton = (Button) view.findViewById(R.id.pedestrian_image_button);
         Button manyDetectorsButton = (Button) view.findViewById(R.id.capabilities_OpenCv_button);
+        Button test_btn_image_video = (Button) view.findViewById(R.id.test_btn_image_video);
         Button test_btn = (Button) view.findViewById(R.id.test_btn);
         Button test_btn_2 = (Button) view.findViewById(R.id.test_btn_2);
         Button test_btn_video = (Button) view.findViewById(R.id.test_btn_video);
@@ -34,6 +38,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         test_btn.setOnClickListener(this);
         test_btn_2.setOnClickListener(this);
         test_btn_video.setOnClickListener(this);
+        test_btn_image_video.setOnClickListener(this);
         return view;
     }
 
@@ -50,7 +55,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                 showFragmentWithBackStack(roadSignImageFragment);
                 break;
             case R.id.pedestrian_image_button:
-                CannyController pedestrianFragment = new CannyController();
+                PedestrianFragment pedestrianFragment = new PedestrianFragment();
                 showFragmentWithBackStack(pedestrianFragment);
                 break;
             case R.id.capabilities_OpenCv_button:
@@ -66,8 +71,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                 showFragmentWithBackStack(testFragment_2);
                 break;
             case R.id.test_btn_video:
-                TestVideoFragment testVideoFragment = new TestVideoFragment();
-                showFragmentWithBackStack(testVideoFragment);
+                Intent cameraIntent = new Intent(getActivity(), CameraActivity.class);
+                startActivity(cameraIntent);
+                break;
+            case R.id.test_btn_image_video:
+                Intent imageVideo = new Intent(getActivity(), PhotoActivity.class);
+                startActivity(imageVideo);
                 break;
         }
     }

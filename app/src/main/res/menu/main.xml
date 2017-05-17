@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/prohibitory_signs"
+        android:orderInCategory="100"
+        android:title="Запрещающие знаки"/>
+
+    <item
+        android:id="@+id/biennguyhiem"
+        android:orderInCategory="100"
+        android:title="Предупреждающие знаки"/>
+
+</menu>

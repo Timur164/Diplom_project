@@ -274,29 +274,4 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
         Uri uri = FileProvider.getUriForFile(getActivity(), getActivity().getApplicationContext().getPackageName() + ".provider", newFile);
         return uri;
     }
-
-    //ZTE 14.04.2016 Уменьшение разрешения фотки, для оптимизации работы с фотками большого качества
-    private Bitmap getScaledBitmap(String picturePath, int width, int height) {
-        BitmapFactory.Options sizeOptions = new BitmapFactory.Options();
-        sizeOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(picturePath, sizeOptions);
-        int inSampleSize = calculateInSampleSize(sizeOptions, width, height);
-        sizeOptions.inJustDecodeBounds = false;
-        sizeOptions.inSampleSize = inSampleSize;
-        return BitmapFactory.decodeFile(picturePath, sizeOptions);
-    }
-
-    //ZTE 14.04.2016 Расчет соотношения высоты к ширине фото
-    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-        if (height > reqHeight || width > reqWidth) {
-            final int heightRatio = Math.round((float) height / (float) reqHeight);
-            final int widthRatio = Math.round((float) width / (float) reqWidth);
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-        }
-        return inSampleSize;
-    }
-
 }

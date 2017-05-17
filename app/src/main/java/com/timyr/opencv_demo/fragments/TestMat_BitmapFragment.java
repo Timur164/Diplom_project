@@ -13,21 +13,32 @@ import android.widget.ImageView;
 import com.timyr.opencv_demo.R;
 import com.timyr.opencv_demo.controller.BaseFragment;
 
+import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
+import org.opencv.core.DMatch;
+import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfDMatch;
+import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.features2d.DescriptorExtractor;
+import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import static org.opencv.imgproc.Imgproc.CV_CONTOURS_MATCH_I2;
 
@@ -49,7 +60,8 @@ public class TestMat_BitmapFragment extends BaseFragment {
 //        task_5_Hough_Circle(); //Поиск кругов
 //        task_6_Find_Contours(); //Нахождение контуров и операции с ними
 //        tasl_7_captureContours();    //Нахождение контуров и выделение их в прямоугольник
-        task_8_Template();
+//        task_8_Template();  //сравнение контуров и сравнение изображений
+        test_9_detector();
 
         return view;
     }
@@ -128,9 +140,9 @@ public class TestMat_BitmapFragment extends BaseFragment {
             Imgproc.cvtColor(mMat, mMat, Imgproc.COLOR_RGB2GRAY);
 
         int threshold1 = 10;
-        int threshold2 = 1000;
+        int threshold2 = 100;
 
-        Imgproc.Canny(mMat, im_canny, threshold1, threshold2, 5, false);
+        Imgproc.Canny(mMat, im_canny, threshold1, threshold2, 3, false);
 
         test_image_1.setImageBitmap(convertMatToBitmap(mMat));
         test_image_2.setImageBitmap(convertMatToBitmap(im_canny));
@@ -232,7 +244,7 @@ public class TestMat_BitmapFragment extends BaseFragment {
 
         test_image_1.setImageBitmap(convertMatToBitmap(imageA));
         int minContours = 500;
-//        Imgproc.drawContours(imageBlurr, contours, 1, new Scalar(0,0,255));
+        Imgproc.drawContours(imageBlurr, contours, 1, new Scalar(0, 0, 255));
         for (int i = 0; i < contours.size(); i++) {
             System.out.println(Imgproc.contourArea(contours.get(i)));
             if (Imgproc.contourArea(contours.get(i)) > minContours) {
@@ -244,20 +256,22 @@ public class TestMat_BitmapFragment extends BaseFragment {
                 }
             }
         }
+
+        Imgproc.moments(mMat);
         // Draw all the contours such that they are filled in.
-//        Mat contourImg = new Mat(original.size(), original.type());
+//        Mat contourImg = new Mat(mMat.size(), mMat.type());
 //        for (int i = 0; i < contours.size(); i++) {
-//            Imgproc.drawContours(contourImg, contours, i, new Scalar(255, 255, 255), -1);
+//            Imgproc.drawContours(contourImg, contours, i, new Scalar(0, 0, 255), -1);
 //        }
         test_image_2.setImageBitmap(convertMatToBitmap(mMat));
 
     }
 
     public void task_8_Template() {
-        Bitmap bmp = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.girl);
+        Bitmap bmp = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.exp_peshehod_2);
         test_image_1.setImageBitmap(bmp);               //изоражение
 
-        Bitmap bmp_exp = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.rot);
+        Bitmap bmp_exp = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.peshehod);
         test_image_1.setImageBitmap(bmp);               //изоражение
 
         Mat mMat = new Mat();
@@ -272,14 +286,17 @@ public class TestMat_BitmapFragment extends BaseFragment {
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
         Imgproc.findContours(original, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        int minContours = 100;
-        int minHeight=30;
+        int minContours = 500;
+        int minHeight = 100;
+        List<MatOfPoint> contoursMain = new ArrayList<MatOfPoint>();
+
         for (int i = 0; i < contours.size(); i++) {
             System.out.println(Imgproc.contourArea(contours.get(i)));
             if (Imgproc.contourArea(contours.get(i)) > minContours) {
                 Rect rect = Imgproc.boundingRect(contours.get(i));
                 System.out.println(rect.height);
                 if (rect.height > minHeight) {
+                    contoursMain.add(contours.get(i));
                     Imgproc.rectangle(mMat, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 0, 255));
                 }
             }
@@ -289,6 +306,7 @@ public class TestMat_BitmapFragment extends BaseFragment {
 
         Imgproc.Canny(template, exp3, 50, 200);
         List<MatOfPoint> contours_exp = new ArrayList<MatOfPoint>();
+        List<MatOfPoint> contours_template = new ArrayList<MatOfPoint>();
         Imgproc.findContours(exp3, contours_exp, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         // Draw all the contours such that they are filled in.
         for (int i = 0; i < contours_exp.size(); i++) {
@@ -297,34 +315,160 @@ public class TestMat_BitmapFragment extends BaseFragment {
                 Rect rect = Imgproc.boundingRect(contours_exp.get(i));
                 System.out.println(rect.height);
                 if (rect.height > minHeight) {
+                    contours_template.add(contours_exp.get(i));
                     Imgproc.rectangle(template, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 0, 255));
                 }
             }
         }
-
         test_image_2.setImageBitmap(convertMatToBitmap(template));
-        Mat result = new Mat(mMat.size(), CvType.CV_32F);
-        int match_method = Imgproc.TM_SQDIFF_NORMED;
-
-        Imgproc.matchTemplate(mMat, template, result, match_method);
-        Core.normalize(result, result, 0, 1, Core.NORM_MINMAX, -1, new Mat());
-
-        // Localizing the best match with minMaxLoc
-        Core.MinMaxLocResult mmr = Core.minMaxLoc(result);
-
-        Point matchLoc;
-        if (match_method == Imgproc.TM_SQDIFF || match_method == Imgproc.TM_SQDIFF_NORMED) {
-            matchLoc = mmr.minLoc;
-        } else {
-            matchLoc = mmr.maxLoc;
+        int k = 0;
+        for (int i = 0; i < contoursMain.size(); i++) {
+            for (int j = 0; j < contours_template.size(); j++) {
+                if (Imgproc.matchShapes(contoursMain.get(i), contours_template.get(j), Imgproc.CV_CONTOURS_MATCH_I3, 0) >= 1) {
+                    k++;
+                    Imgproc.drawContours(mMat, contoursMain, i, new Scalar(0, 0, 255), -1);
+                }
+            }
         }
-
-        Imgproc.rectangle(mMat, matchLoc, new Point(matchLoc.x + template.cols(),
-                matchLoc.y + template.rows()), new Scalar(255, 0, 0));
+        Log.e("my", "koef: " + k);
 
         test_image_3.setImageBitmap(convertMatToBitmap(mMat));
 
 
+//        Mat result = new Mat(mMat.size(), CvType.CV_32F);
+//        int match_method = Imgproc.TM_SQDIFF_NORMED;
+
+//        Imgproc.matchTemplate(mMat, template, result, match_method);
+//        Core.normalize(result, result, 0, 1, Core.NORM_MINMAX, -1, new Mat());
+//
+//        // Localizing the best match with minMaxLoc
+//        Core.MinMaxLocResult mmr = Core.minMaxLoc(result);
+//
+//        Point matchLoc;
+//        if (match_method == Imgproc.TM_SQDIFF || match_method == Imgproc.TM_SQDIFF_NORMED) {
+//            matchLoc = mmr.minLoc;
+//        } else {
+//            matchLoc = mmr.maxLoc;
+//        }
+//
+//        Imgproc.rectangle(mMat, matchLoc, new Point(matchLoc.x + template.cols(),
+//                matchLoc.y + template.rows()), new Scalar(255, 0, 0));
+
+//        test_image_3.setImageBitmap(convertMatToBitmap(mMat));
+
+    }
+
+    public void test_9_detector() {
+        Bitmap bmp = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.girl);
+        test_image_1.setImageBitmap(bmp);               //изоражение
+
+        Bitmap bmp_exp = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.rot);
+        test_image_1.setImageBitmap(bmp);               //изоражение
+
+        Mat mMat = new Mat();
+        Utils.bitmapToMat(bmp, mMat);
+        Mat template = new Mat();
+        Utils.bitmapToMat(bmp_exp, template);
+
+//        Mat imageSceneGray = new Mat(mMat.size(), CvType.CV_8UC1);
+        Mat imageSceneGray = mMat.clone();
+        Mat imageObjectGray = template.clone();
+//        Mat imageObjectGray = new Mat(template.size(), CvType.CV_8UC1);
+//        Imgproc.cvtColor(mMat, imageSceneGray, Imgproc.COLOR_BGR2GRAY);
+//        Imgproc.cvtColor(template, imageObjectGray, Imgproc.COLOR_BGR2GRAY);
+
+        test_image_1.setImageBitmap(convertMatToBitmap(imageSceneGray));
+        test_image_2.setImageBitmap(convertMatToBitmap(imageObjectGray));
+        try {
+            FeatureDetector detector = FeatureDetector.create(FeatureDetector.BRISK);
+            DescriptorExtractor extractor = DescriptorExtractor.create(DescriptorExtractor.BRISK);
+            DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE);
+
+            // -- Step 1: Detect the keypoints using Detector
+            MatOfKeyPoint keypoints_object = new MatOfKeyPoint();
+            MatOfKeyPoint keypoints_scene = new MatOfKeyPoint();
+            detector.detect(imageObjectGray, keypoints_object);
+            detector.detect(imageSceneGray, keypoints_scene);
+
+            // -- Step 2: Calculate descriptors (feature vectors)
+            Mat descriptors_object = new Mat();
+            Mat descriptors_scene = new Mat();
+            extractor.compute(imageObjectGray, keypoints_object, descriptors_object);
+            extractor.compute(imageSceneGray, keypoints_scene, descriptors_scene);
+
+            // -- Step 3: Matching descriptor vectors using matcher
+            MatOfDMatch matches = new MatOfDMatch();
+            matcher.match(descriptors_object, descriptors_scene, matches);
+
+            List<DMatch> matchesList = matches.toList();
+            double max_dist = 5000;
+            double min_dist = 50;
+            // -- Quick calculation of max and min distances between keypoints
+            for (int i = 0; i < descriptors_object.rows(); i++) {
+                double dist = matchesList.get(i).distance;
+                if (dist < min_dist) {
+                    min_dist = dist;
+                }
+                if (dist > max_dist) {
+                    max_dist = dist;
+                }
+            }
+
+            // -- Draw only "good" matches (i.e. whose distance is less than 3*min_dist )
+            Vector<DMatch> good_matches = new Vector<DMatch>();
+            for (int i = 0; i < descriptors_object.rows(); i++) {
+                if (matchesList.get(i).distance < 3 * min_dist) {
+                    good_matches.add(matchesList.get(i));
+                }
+            }
+
+            List<Point> objListGoodMatches = new ArrayList<Point>();
+            List<Point> sceneListGoodMatches = new ArrayList<Point>();
+
+            List<KeyPoint> keypoints_objectList = keypoints_object.toList();
+            List<KeyPoint> keypoints_sceneList = keypoints_scene.toList();
+
+            for (int i = 0; i < good_matches.size(); i++) {
+                // -- Get the keypoints from the good matches
+                objListGoodMatches.add(keypoints_objectList.get(good_matches.get(i).queryIdx).pt);
+                sceneListGoodMatches.add(keypoints_sceneList.get(good_matches.get(i).trainIdx).pt);
+                Imgproc.circle(mMat, new Point(sceneListGoodMatches.get(i).x, sceneListGoodMatches.get(i).y), 3, new Scalar(255, 0, 0, 255));
+
+            }
+            String text = "Good Matches Count: " + good_matches.size();
+            Imgproc.putText(mMat, text, new Point(0, 60), Core.FONT_HERSHEY_COMPLEX_SMALL, 1, new Scalar(0, 0, 255, 255));
+
+            MatOfPoint2f objListGoodMatchesMat = new MatOfPoint2f();
+            objListGoodMatchesMat.fromList(objListGoodMatches);
+            MatOfPoint2f sceneListGoodMatchesMat = new MatOfPoint2f();
+            sceneListGoodMatchesMat.fromList(sceneListGoodMatches);
+
+            // findHomography needs 4 corresponding points
+            if (good_matches.size() > 3) {
+
+
+                Mat H = Calib3d.findHomography(objListGoodMatchesMat, sceneListGoodMatchesMat, Calib3d.RANSAC, 5 /* RansacTreshold */);
+
+                Mat obj_corners = new Mat(4, 1, CvType.CV_32FC2);
+                Mat scene_corners = new Mat(4, 1, CvType.CV_32FC2);
+
+                obj_corners.put(0, 0, new double[]{0, 0});
+                obj_corners.put(1, 0, new double[]{imageObjectGray.cols(), 0});
+                obj_corners.put(2, 0, new double[]{imageObjectGray.cols(), imageObjectGray.rows()});
+                obj_corners.put(3, 0, new double[]{0, imageObjectGray.rows()});
+
+                Core.perspectiveTransform(obj_corners, scene_corners, H);
+
+                Imgproc.line(mMat, new Point(scene_corners.get(0, 0)), new Point(scene_corners.get(1, 0)), new Scalar(0, 255, 0), 2);
+                Imgproc.line(mMat, new Point(scene_corners.get(1, 0)), new Point(scene_corners.get(2, 0)), new Scalar(0, 255, 0), 2);
+                Imgproc.line(mMat, new Point(scene_corners.get(2, 0)), new Point(scene_corners.get(3, 0)), new Scalar(0, 255, 0), 2);
+                Imgproc.line(mMat, new Point(scene_corners.get(3, 0)), new Point(scene_corners.get(0, 0)), new Scalar(0, 255, 0), 2);
+
+            }
+        } catch (Exception e) {
+            Log.e("my", e.getMessage());
+        }
+        test_image_3.setImageBitmap(convertMatToBitmap(mMat));
     }
 
 
@@ -360,7 +504,7 @@ public class TestMat_BitmapFragment extends BaseFragment {
             Utils.matToBitmap(mat, bmp);
             return bmp;
         } catch (Exception e) {
-            Log.e("my","bugs convertMatToBitmap");
+            Log.e("my", "bugs convertMatToBitmap");
             Bitmap bmps = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.error);
             return bmps;
         }

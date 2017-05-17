@@ -4,67 +4,71 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorToolbar">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/selection_section"
-            android:textColor="@color/colorlightBlack"
-            android:textSize="15sp" />
-    </android.support.v7.widget.Toolbar>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/capabilities_OpenCv_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/many_detectors" />
+            <Button
+                android:id="@+id/capabilities_OpenCv_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/many_detectors" />
 
-    <Button
-        android:id="@+id/road_sign_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/recognition_road_sign" />
+            <Button
+                android:id="@+id/road_sign_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/recognition_road_sign" />
 
-    <Button
-        android:id="@+id/road_sign_image_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/recognition_road_sign_image" />
+            <Button
+                android:id="@+id/road_sign_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/recognition_road_sign_image" />
 
 
-    <Button
-        android:id="@+id/pedestrian_image_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/pedestrian" />
+            <Button
+                android:id="@+id/pedestrian_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/pedestrian" />
 
-    <Button
-        android:id="@+id/test_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="test_1" />
+            <Button
+                android:id="@+id/test_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="test_1" />
 
-    <Button
-        android:id="@+id/test_btn_2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Обработка изображений Mat " />
+            <Button
+                android:id="@+id/test_btn_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Обработка изображений Mat " />
 
-    <Button
-        android:id="@+id/test_btn_video"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Тест видео" />
+            <Button
+                android:id="@+id/test_btn_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Тест видео с камеры" />
+
+            <Button
+                android:id="@+id/test_btn_image_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Тест фото и видео" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
