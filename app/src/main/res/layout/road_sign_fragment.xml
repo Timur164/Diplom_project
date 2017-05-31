@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.timyr.opencv_demo.fragments.RoadSignFragment">
+    tools:context="com.timyr.opencv_demo.test.RoadSignFragment">
 
     <VideoView
         android:id="@+id/videoPlayer"

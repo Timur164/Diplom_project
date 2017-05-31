@@ -1,4 +1,4 @@
-package com.timyr.opencv_demo;
+package com.timyr.opencv_demo.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,10 +6,9 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.timyr.opencv_demo.R;
 import com.timyr.opencv_demo.adapters.itemAdapter;
 import com.timyr.opencv_demo.controller.Sign;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 

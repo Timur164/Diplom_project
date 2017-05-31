@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
@@ -17,20 +18,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.Button;
 
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SectionDrawerItem;
-import com.timyr.opencv_demo.fragments.HomeFragment;
-import com.timyr.opencv_demo.fragments.SplashActivity;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.timyr.opencv_demo.activity.CameraActivity;
+import com.timyr.opencv_demo.fragments.ContactFragment;
+import com.timyr.opencv_demo.fragments.PhotoFragment;
+import com.timyr.opencv_demo.activity.SplashActivity;
+import com.timyr.opencv_demo.fragments.SettingsFragment;
 
 import org.opencv.android.OpenCVLoader;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements Drawer.OnDrawerItemClickListener {
     private Dialog progressDialog;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +47,17 @@ public class MainActivity extends ActionBarActivity {
         if (!checkPermissionsLocation()) {
             requestPermissions();
         }
-        // Handle Toolbar
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, new PhotoFragment(), "PhotoFragment").setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window w = getWindow();
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(getResources().getString(R.string.splash_name));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         new Drawer()
@@ -52,15 +66,12 @@ public class MainActivity extends ActionBarActivity {
                 .withActionBarDrawerToggle(true)
                 .withHeader(R.layout.drawer_header)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_home).withBadge("99").withIdentifier(1),
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_free_play).withIcon(FontAwesome.Icon.faw_gamepad),
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_custom).withIcon(FontAwesome.Icon.faw_eye).withBadge("6").withIdentifier(2),
-                        new SectionDrawerItem().withName(R.string.drawer_item_settings),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_help).withIcon(FontAwesome.Icon.faw_cog),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_open_source).withIcon(FontAwesome.Icon.faw_question).setEnabled(false),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_image).withIdentifier(1),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_free_play).withIcon(FontAwesome.Icon.faw_camera),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_settings).withIcon(FontAwesome.Icon.faw_bell),
                         new DividerDrawerItem(),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_contact).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1)
-                )
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_contact).withIcon(FontAwesome.Icon.faw_github).withIdentifier(1)
+                ).withOnDrawerItemClickListener(this)
                 .build();
 
         progressDialog = new Dialog(this, android.R.style.Theme_Black);
@@ -69,10 +80,8 @@ public class MainActivity extends ActionBarActivity {
         progressDialog.getWindow().setBackgroundDrawableResource(R.color.colorBorderGrey);
         progressDialog.setContentView(view);
 
-//
-//        Intent cameraIntent = new Intent(this, HomeFragment.class);
-//        startActivity(cameraIntent);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+        Intent cameraIntent = new Intent(this, SplashActivity.class);
+        startActivity(cameraIntent);
 
     }
 
@@ -112,6 +121,52 @@ public class MainActivity extends ActionBarActivity {
             progressDialog.show();
         } else {
             progressDialog.hide();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && data != null && data.getStringExtra("key")!=null) {
+            if (data.getStringExtra("key") != null) {
+                toolbar.setTitle(getResources().getString(R.string.drawer_item_settings));
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        SettingsFragment settingsFragment = new SettingsFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("key", "key");
+                        settingsFragment.setArguments(bundle);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, settingsFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                    }
+                }, 100);
+            }
+        } else {
+            PhotoFragment demoFragment = (PhotoFragment) getSupportFragmentManager().findFragmentByTag("PhotoFragment");
+            demoFragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
+        switch (position) {
+            case 1:
+                toolbar.setTitle(getResources().getString(R.string.photoGallery));
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, new PhotoFragment(), "PhotoFragment").setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                break;
+            case 2:
+//               toolbar.setTitle(getResources().getString(R.string.camera));
+                Intent cameraIntent = new Intent(MainActivity.this, CameraActivity.class);
+                startActivityForResult(cameraIntent, 200);
+                break;
+            case 3:
+                toolbar.setTitle(getResources().getString(R.string.drawer_item_settings));
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, new SettingsFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                break;
+            case 5:
+                toolbar.setTitle(getResources().getString(R.string.drawer_item_contact));
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, new ContactFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                break;
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.timyr.opencv_demo.fragments;
+package com.timyr.opencv_demo.test;
 
 
 import android.content.Intent;
@@ -8,14 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.VideoView;
 
-import com.timyr.opencv_demo.CameraActivity;
-import com.timyr.opencv_demo.PhotoActivity;
+import com.timyr.opencv_demo.activity.CameraActivity;
 import com.timyr.opencv_demo.R;
-import com.timyr.opencv_demo.SmartObjectRecognitionActivity;
+import com.timyr.opencv_demo.fragments.PhotoFragment;
+import com.timyr.opencv_demo.test.PedestrianFragment;
+import com.timyr.opencv_demo.test.RoadSignFragment;
+import com.timyr.opencv_demo.test.RoadSignImageFragment;
+import com.timyr.opencv_demo.test.SmartObjectRecognitionActivity;
 import com.timyr.opencv_demo.controller.BaseFragment;
-import com.timyr.opencv_demo.controller.CannyController;
+import com.timyr.opencv_demo.test.TestFragment;
+import com.timyr.opencv_demo.test.TestMat_BitmapFragment;
 
 public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
@@ -75,7 +78,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                 startActivity(cameraIntent);
                 break;
             case R.id.test_btn_image_video:
-                Intent imageVideo = new Intent(getActivity(), PhotoActivity.class);
+                Intent imageVideo = new Intent(getActivity(), PhotoFragment.class);
                 startActivity(imageVideo);
                 break;
         }

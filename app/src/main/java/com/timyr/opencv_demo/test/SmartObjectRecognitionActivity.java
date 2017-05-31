@@ -1,4 +1,4 @@
-package com.timyr.opencv_demo;
+package com.timyr.opencv_demo.test;
 
 
 import android.app.Activity;
@@ -11,6 +11,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+
+import com.timyr.opencv_demo.R;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;

@@ -1,4 +1,4 @@
-package com.timyr.opencv_demo.utilites;
+package com.timyr.opencv_demo.test.utilites;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;

@@ -1,4 +1,4 @@
-package com.timyr.opencv_demo.controller;
+package com.timyr.opencv_demo.test.utilites;
 
 
 import android.graphics.Bitmap;

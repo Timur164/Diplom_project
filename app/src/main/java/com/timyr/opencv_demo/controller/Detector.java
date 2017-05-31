@@ -24,14 +24,14 @@ public class Detector {
     }
 
     private double scaleFactor = 1.1;
-    private int minNeighbors = 4;
-    private int flags = 0;
-    private Size min_size = new Size(0, 0);
+    private int minNeighbors = 3;
+    private int flags = 3;
+    private Size min_size = new Size(480,480 );
     int typeCheck = 0;
     //	ScaleFactor - параметр, определяющий, насколько уменьшен размер изображения на каждой шкале изображения.(1.1)
 //	MinNeighbors - Параметр, указывающий, сколько соседей должно быть у каждого прямоугольника-кандидата, чтобы сохранить его.(2-3)
 //	Flags - Параметр с тем же значением для старого каскада, что и в функции cvHaarDetectObjects. Он не используется для нового каскада.(0)
-
+    //minSize – Минимально возможный размер объекта. Объекты меньшего размера игнорируются.
     public void Detect(Mat mGray, MatOfRect signs, int type,int mAbsoluteFaceSize) {
         //loadCascadeFile(type, cascadeClassifier);
         if (typeCheck != type) {
@@ -39,7 +39,7 @@ public class Detector {
             typeCheck = type;
         }
         if (cascadeClassifier != null ) {
-            cascadeClassifier.detectMultiScale(mGray, signs, scaleFactor, minNeighbors, flags, new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
+            cascadeClassifier.detectMultiScale(mGray, signs, scaleFactor, minNeighbors, flags, new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size(480,480));
         }
     }
 

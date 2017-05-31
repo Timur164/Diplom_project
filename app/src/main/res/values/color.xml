@@ -6,12 +6,12 @@
     <color name="colorButton">#ec008c</color>
     <color name="colorToolbar">#edd9cdcd</color>
     <color name="colorWhite">#ffffff</color>
-    <color name="colorDarkGrey">#999999</color>
+    <color name="colorDarkGrey">#d7999999</color>
     <color name="colorlightBlack">#212121</color>
     <color name="colorLightBlack">#515151</color>
     <color name="colorLightGrey">#CCCCCC</color>
     <color name="colorBorderGrey">#474747</color>
     <color name="colorlightPink">#e7008a</color>
     <color name="colorDarkPink">#cf007b</color>
-    <color name="yellow">#fbc72c</color>
+    <color name="appBlueColor">#4F91FF</color>
 </resources>

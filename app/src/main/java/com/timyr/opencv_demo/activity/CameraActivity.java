@@ -1,11 +1,10 @@
-package com.timyr.opencv_demo;
+package com.timyr.opencv_demo.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,19 +12,22 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.timyr.opencv_demo.MainActivity;
+import com.timyr.opencv_demo.R;
+import com.timyr.opencv_demo.RoadSignApp;
 import com.timyr.opencv_demo.adapters.itemAdapter;
+import com.timyr.opencv_demo.controller.BaseActivity;
 import com.timyr.opencv_demo.controller.Detector;
 import com.timyr.opencv_demo.controller.Sign;
 import com.timyr.opencv_demo.controller.Utilities;
+import com.timyr.opencv_demo.fragments.SettingsFragment;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.FpsMeter;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
@@ -34,10 +36,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 public class CameraActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
@@ -46,7 +44,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     private CameraBridgeViewBase mCameraView;
     private ListView listDetectedSigns;
     private RelativeLayout listRelativeLayout;
-    private CascadeClassifier cascadeClassifier;
+    private RelativeLayout checkfps;
     private ArrayList<Sign> listSign;
     private Detector detector;
     private Detector detector_signs;
@@ -55,14 +53,16 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     private Mat mGray;
 
     private int flagSigns = 1;
-    private float mRelativeFaceSize = 0.1f;
+    private double mRelativeFaceSize = RoadSignApp.getInstance().getMinSize();
     private int mAbsoluteFaceSize = 0;
+    private boolean checkFps = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.camera_preview);
+        Toast.makeText(this, "поверните телефон в горизонтальное положение", Toast.LENGTH_LONG).show();
         Initialze();
     }
 
@@ -70,7 +70,9 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         mCameraView = (CameraBridgeViewBase) findViewById(R.id.mCameraView);
         listDetectedSigns = (ListView) findViewById(R.id.listView1);
         listRelativeLayout = (RelativeLayout) findViewById(R.id.listViewLayout);
+        checkfps = (RelativeLayout) findViewById(R.id.checkfps);
         Button buttonDate = (Button) findViewById(R.id.buttonDate);
+        Button buttonSettings = (Button) findViewById(R.id.buttonSettings);
         buttonDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,9 +81,24 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
                 startActivity(intent);
             }
         });
+        buttonSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra("key", "key");
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        });
+        checkfps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkFps = !checkFps;
+            }
+        });
         mCameraView.setCvCameraViewListener(this);
         listRelativeLayout.setVisibility(View.GONE);
-        mCameraView.setMaxFrameSize(1280, 720);
+        mCameraView.setMaxFrameSize(RoadSignApp.getInstance().getWidthSize(), RoadSignApp.getInstance().getHeightSize());
         listSign = new ArrayList<Sign>();
     }
 
@@ -114,7 +131,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
                     detector.loadCascadeFile(1);
                     detector_signs = new Detector(CameraActivity.this);
                     detector_signs.loadCascadeFile(2);
-                    mCameraView.enableFpsMeter();
                     mCameraView.enableView();
                     break;
                 default:
@@ -138,6 +154,12 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        if (checkFps) {
+            mCameraView.enableFpsMeter();
+        } else {
+            mCameraView.disableFpsMeter();
+        }
+
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
 
@@ -147,22 +169,24 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         if (mAbsoluteFaceSize == 0) {
             int height = mGray.rows();
             if (Math.round(height * mRelativeFaceSize) > 0) {
-                mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
+                mAbsoluteFaceSize = (int) Math.round(height * mRelativeFaceSize);
             }
         }
 
 
         MatOfRect signs = new MatOfRect();
-//        MatOfRect signs2 = new MatOfRect();
+        MatOfRect signs2 = new MatOfRect();
 
-        detector.Detect(mGray, signs, flagSigns, mAbsoluteFaceSize);
-        Rect[] prohibitionArray = signs.toArray();
-        Draw(prohibitionArray);
-
-//        detector_signs.Detect(mGray, signs2,2,mAbsoluteFaceSize);
-//        Rect[] dangerArray = signs2.toArray();
-//        Draw(dangerArray);
-
+        if (RoadSignApp.getInstance().isShowProSign()) {
+            detector.Detect(mGray, signs, flagSigns, mAbsoluteFaceSize);
+            Rect[] prohibitionArray = signs.toArray();
+            Draw(prohibitionArray);
+        }
+        if (RoadSignApp.getInstance().isShowWarSign()) {
+            detector_signs.Detect(mGray, signs2, 2, mAbsoluteFaceSize);
+            Rect[] dangerArray = signs2.toArray();
+            Draw(dangerArray);
+        }
         return mRgba;
     }
 
@@ -183,7 +207,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             Mat subMat = new Mat();
             subMat = mRgba.submat(facesArray[i]);
 
-            if (flagSigns == 1) {
+            if (RoadSignApp.getInstance().isShowProSign()) {
                 Sign.myMap.put("Запрещающий знак " + i, Utilities.convertMatToBitmap(subMat));
             } else {
                 Sign.myMap.put("Предупреждающий знак " + i, Utilities.convertMatToBitmap(subMat));
@@ -195,18 +219,19 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
 
                 @Override
                 public void run() {
-                    // TODO Auto-generated method stub
                     Sign sign;
-                    if (flagSigns == 1) {
+                    if (RoadSignApp.getInstance().isShowProSign()) {
                         sign = new Sign("unknown", "Запрещающий знак " + ii);
                     } else {
                         sign = new Sign("unknown", "Предупреждающий знак " + ii);
                     }
                     listSign.add(sign);
-//                    listRelativeLayout.setVisibility(View.VISIBLE);
-//                    itemAdapter adapter= new itemAdapter(listSign, CameraActivity.this);
-//                    adapter.notifyDataSetChanged();
-//                    listDetectedSigns.setAdapter(adapter);
+                    if (RoadSignApp.getInstance().isShowSign()) {
+                        listRelativeLayout.setVisibility(View.VISIBLE);
+                        itemAdapter adapter = new itemAdapter(listSign, CameraActivity.this);
+                        adapter.notifyDataSetChanged();
+                        listDetectedSigns.setAdapter(adapter);
+                    }
                 }
             });
 

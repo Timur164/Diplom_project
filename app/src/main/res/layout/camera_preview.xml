@@ -9,15 +9,27 @@
         android:layout_height="fill_parent"
         android:layout_centerInParent="true" />
 
-
-    <Button
-        android:id="@+id/buttonDate"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/search_icon"
-        android:layout_below="@+id/listViewLayout"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_below="@+id/listViewLayout">
+
+        <Button
+            android:id="@+id/buttonDate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/ic_server" />
+
+        <Button
+            android:id="@+id/buttonSettings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/ic_settings" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/listViewLayout"
@@ -36,5 +48,13 @@
             android:layout_height="match_parent"></ListView>
 
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/checkfps"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>

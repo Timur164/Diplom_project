@@ -1,4 +1,4 @@
-package com.timyr.opencv_demo.fragments;
+package com.timyr.opencv_demo.test;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

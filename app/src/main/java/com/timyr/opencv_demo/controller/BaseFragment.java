@@ -22,7 +22,7 @@ public class BaseFragment extends Fragment {
         }
     }
 
-    public void showProgressDialog(int title, int content) {
+    public void showProgressDialog(String title, String content) {
         try {
             MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
                     .title(title)

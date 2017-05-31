@@ -1,4 +1,4 @@
-package com.timyr.opencv_demo;
+package com.timyr.opencv_demo.activity;
 
 import android.graphics.Bitmap;
 import android.media.MediaCodec;
@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import com.timyr.opencv_demo.R;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -41,7 +42,7 @@ import java.util.TimerTask;
  * Created by Timur on 11.05.2017.
  */
 
-public class VideoViewDemo extends BaseActivity {
+public class VideoViewDemoActivity extends BaseActivity {
 
     VideoCapture videoCapture;
 
