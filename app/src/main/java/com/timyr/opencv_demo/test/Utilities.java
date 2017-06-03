@@ -1,4 +1,4 @@
-package com.timyr.opencv_demo.controller;
+package com.timyr.opencv_demo.test;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -17,14 +17,14 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 public class Utilities {
-	public static Bitmap convertMatToBitmap(Mat src){
-		Bitmap bm = Bitmap.createBitmap(src.cols(), 
-				src.rows(),Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(src, bm);
-        //Imgproc.cvtColor(src, dst, code, dstCn)
-        return bm;
-	}
-	
+//	public static Bitmap convertMatToBitmap(Mat src){
+//		Bitmap bm = Bitmap.createBitmap(src.cols(),
+//				src.rows(),Bitmap.Config.ARGB_8888);
+//        Utils.matToBitmap(src, bm);
+//        //Imgproc.cvtColor(src, dst, code, dstCn)
+//        return bm;
+//	}
+//
 	public static String getRealPathFromURI(Uri contentURI,Activity activity) {
 	    String path;
 	    Cursor cursor = activity.getContentResolver().query(contentURI, null, null, null, null);

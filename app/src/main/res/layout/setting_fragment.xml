@@ -5,192 +5,284 @@
     android:background="@color/colorWhite"
     android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/textSizeVideo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:text="@string/sezeVideo"
-            android:textColor="@color/colorlightBlack"
-            android:textSize="17sp" />
+        android:layout_height="match_parent"
+        android:layout_above="@+id/buttonSave">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
+                android:id="@+id/textSizeVideo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_weight="0.7"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="15dp"
                 android:gravity="center"
-                android:text="Ширина"
+                android:text="@string/sezeVideo"
                 android:textColor="@color/colorlightBlack"
-                android:textSize="18sp" />
+                android:textSize="17sp" />
 
-            <EditText
-                android:id="@+id/widthSize"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:inputType="number" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="0.7"
+                    android:gravity="center"
+                    android:text="Ширина"
+                    android:textColor="@color/colorlightBlack"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/widthSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:inputType="number" />
 
 
-        </LinearLayout>
+            </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_weight="0.7"
-                android:gravity="center"
-                android:text="Высота"
-                android:textColor="@color/colorlightBlack"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/heightSize"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:inputType="number" />
-        </LinearLayout>
+                android:orientation="horizontal">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_margin="5dp"
-            android:background="@color/colorPrimary" />
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="0.7"
+                    android:gravity="center"
+                    android:text="Высота"
+                    android:textColor="@color/colorlightBlack"
+                    android:textSize="18sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp">
+                <EditText
+                    android:id="@+id/heightSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:inputType="number" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/textMinSize"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:text="@string/minSizeDetect"
-                android:textColor="@color/colorlightBlack"
-                android:textSize="17sp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="5dp"
+                android:background="@color/colorPrimary" />
 
-            <EditText
-                android:id="@+id/minSize"
-                android:layout_width="120dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:hint="min_size"
-                android:inputType="number" />
+                android:layout_margin="15dp">
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/textMinSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:text="@string/minSizeDetect"
+                    android:textColor="@color/colorlightBlack"
+                    android:textSize="17sp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_margin="5dp"
-            android:background="@color/colorPrimary" />
+                <EditText
+                    android:id="@+id/minSize"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="min_size"
+                    android:inputType="number" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp">
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/textSize"
-                android:layout_width="wrap_content"
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="5dp"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.1"
-                android:text="Отображать знаки на камере"
-                android:textColor="@color/colorlightBlack"
-                android:textSize="17sp" />
+                android:layout_margin="15dp">
 
-            <CheckBox
-                android:id="@+id/showSign"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/textScaleFactor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:text="@string/scaleFactor"
+                    android:textColor="@color/colorlightBlack"
+                    android:textSize="17sp" />
 
-        </LinearLayout>
+                <EditText
+                    android:id="@+id/scaleFactor"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="scaleFactor"
+                    android:inputType="number" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_margin="5dp"
-            android:background="@color/colorPrimary" />
+            </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="5dp"
+                android:background="@color/colorPrimary" />
 
-            <TextView
-                android:id="@+id/textProSign"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.1"
-                android:text="Запрещающие знаки"
-                android:textColor="@color/colorlightBlack"
-                android:textSize="17sp" />
+                android:layout_margin="15dp">
 
-            <CheckBox
-                android:id="@+id/showProSign"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/textMinNeighbors"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:text="Коэффициент интенсивности обнаружения"
+                    android:textColor="@color/colorlightBlack"
+                    android:textSize="17sp" />
 
-        </LinearLayout>
+                <EditText
+                    android:id="@+id/minNeighbors"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="minNeighbors"
+                    android:inputType="number" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_margin="5dp"
-            android:background="@color/colorPrimary" />
+            </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="5dp"
+                android:background="@color/colorPrimary" />
 
-            <TextView
-                android:id="@+id/textWarSign"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.1"
-                android:text="Предупреждающие знаки"
-                android:textColor="@color/colorlightBlack"
-                android:textSize="17sp" />
+                android:layout_margin="15dp">
 
-            <CheckBox
-                android:id="@+id/showWarSign"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/textColorVideo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.1"
+                    android:text="Цвет изображения (стандартный/обработанный)"
+                    android:textColor="@color/colorlightBlack"
+                    android:textSize="17sp" />
 
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/colorFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="5dp"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp">
+
+                <TextView
+                    android:id="@+id/textSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.1"
+                    android:text="Отображать знаки на камере"
+                    android:textColor="@color/colorlightBlack"
+                    android:textSize="17sp" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/showSign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="5dp"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp">
+
+                <TextView
+                    android:id="@+id/textProSign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.1"
+                    android:text="Запрещающие знаки"
+                    android:textColor="@color/colorlightBlack"
+                    android:textSize="17sp" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/showProSign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="5dp"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp">
+
+                <TextView
+                    android:id="@+id/textWarSign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.1"
+                    android:text="Предупреждающие знаки"
+                    android:textColor="@color/colorlightBlack"
+                    android:textSize="17sp" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/showWarSign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
         </LinearLayout>
-
-    </LinearLayout>
-
+    </android.support.v4.widget.NestedScrollView>
 
     <Button
         android:id="@+id/buttonSave"
@@ -199,7 +291,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_margin="10dp"
+        android:background="@color/appBlueColor"
         android:text="Сохранить" />
 
 

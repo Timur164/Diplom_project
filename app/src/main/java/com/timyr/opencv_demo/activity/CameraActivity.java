@@ -3,10 +3,6 @@ package com.timyr.opencv_demo.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -14,15 +10,11 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.timyr.opencv_demo.MainActivity;
 import com.timyr.opencv_demo.R;
 import com.timyr.opencv_demo.RoadSignApp;
 import com.timyr.opencv_demo.adapters.itemAdapter;
-import com.timyr.opencv_demo.controller.BaseActivity;
 import com.timyr.opencv_demo.controller.Detector;
 import com.timyr.opencv_demo.controller.Sign;
-import com.timyr.opencv_demo.controller.Utilities;
-import com.timyr.opencv_demo.fragments.SettingsFragment;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -34,7 +26,6 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
 
 import java.util.ArrayList;
 
@@ -44,7 +35,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     private CameraBridgeViewBase mCameraView;
     private ListView listDetectedSigns;
     private RelativeLayout listRelativeLayout;
-    private RelativeLayout checkfps;
     private ArrayList<Sign> listSign;
     private Detector detector;
     private Detector detector_signs;
@@ -52,7 +42,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     private Mat mRgba;
     private Mat mGray;
 
-    private int flagSigns = 1;
     private double mRelativeFaceSize = RoadSignApp.getInstance().getMinSize();
     private int mAbsoluteFaceSize = 0;
     private boolean checkFps = false;
@@ -63,20 +52,20 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.camera_preview);
         Toast.makeText(this, "поверните телефон в горизонтальное положение", Toast.LENGTH_LONG).show();
-        Initialze();
+        Initialize();
     }
 
-    private void Initialze() {
+    private void Initialize() {
         mCameraView = (CameraBridgeViewBase) findViewById(R.id.mCameraView);
         listDetectedSigns = (ListView) findViewById(R.id.listView1);
         listRelativeLayout = (RelativeLayout) findViewById(R.id.listViewLayout);
-        checkfps = (RelativeLayout) findViewById(R.id.checkfps);
+        RelativeLayout checkfps = (RelativeLayout) findViewById(R.id.checkfps);
         Button buttonDate = (Button) findViewById(R.id.buttonDate);
         Button buttonSettings = (Button) findViewById(R.id.buttonSettings);
         buttonDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(CameraActivity.this, RegconitionActivity.class);
+                Intent intent = new Intent(CameraActivity.this, RecognitionActivity.class);
                 intent.putParcelableArrayListExtra("key", listSign);
                 startActivity(intent);
             }
@@ -164,7 +153,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         mGray = inputFrame.gray();
 
         Imgproc.equalizeHist(mGray, mGray);//Выравнивает гистограмму изображения в градациях серого.
-        Imgproc.GaussianBlur(mGray, mGray, new Size(5, 5), 0);
+        Imgproc.GaussianBlur(mGray, mGray, new Size(5, 5), 0); //Сглаживание изображение фильтром Гаусса
 
         if (mAbsoluteFaceSize == 0) {
             int height = mGray.rows();
@@ -173,12 +162,11 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             }
         }
 
-
         MatOfRect signs = new MatOfRect();
         MatOfRect signs2 = new MatOfRect();
 
         if (RoadSignApp.getInstance().isShowProSign()) {
-            detector.Detect(mGray, signs, flagSigns, mAbsoluteFaceSize);
+            detector.Detect(mGray, signs, 1, mAbsoluteFaceSize);
             Rect[] prohibitionArray = signs.toArray();
             Draw(prohibitionArray);
         }
@@ -187,7 +175,12 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             Rect[] dangerArray = signs2.toArray();
             Draw(dangerArray);
         }
-        return mRgba;
+
+        if(RoadSignApp.getInstance().isColorFilter()){
+            return mRgba;
+        }else{
+            return mGray;
+        }
     }
 
     public void Draw(Rect[] facesArray) {
@@ -205,15 +198,23 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         for (int i = 0; i < facesArray.length; i++) {
             final int ii = i;
             Mat subMat = new Mat();
-            subMat = mRgba.submat(facesArray[i]);
-
-            if (RoadSignApp.getInstance().isShowProSign()) {
-                Sign.myMap.put("Запрещающий знак " + i, Utilities.convertMatToBitmap(subMat));
-            } else {
-                Sign.myMap.put("Предупреждающий знак " + i, Utilities.convertMatToBitmap(subMat));
+            if(RoadSignApp.getInstance().isColorFilter()){
+                subMat = mRgba.submat(facesArray[i]);
+            }else{
+                subMat = mGray.submat(facesArray[i]);
             }
 
-            Imgproc.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 2);
+            if (RoadSignApp.getInstance().isShowProSign()) {
+                Sign.myMap.put("Запрещающий знак " + i, Detector.convertMatToBitmap(subMat));
+            } else {
+                Sign.myMap.put("Предупреждающий знак " + i, Detector.convertMatToBitmap(subMat));
+            }
+
+            if(RoadSignApp.getInstance().isColorFilter()){
+                Imgproc.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 2);
+            }else{
+                Imgproc.rectangle(mGray, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 2);
+            }
 
             runOnUiThread(new Runnable() {
 
@@ -239,25 +240,25 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.prohibitory_signs:
-                flagSigns = 1;
-                break;
-            case R.id.biennguyhiem:
-                flagSigns = 2;
-                break;
-            default:
-                flagSigns = 1;
-                break;
-        }
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.prohibitory_signs:
+//                flagSigns = 1;
+//                break;
+//            case R.id.biennguyhiem:
+//                flagSigns = 2;
+//                break;
+//            default:
+//                flagSigns = 1;
+//                break;
+//        }
+//        return true;
+//    }
 }

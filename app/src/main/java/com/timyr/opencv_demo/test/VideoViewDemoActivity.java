@@ -1,4 +1,4 @@
-package com.timyr.opencv_demo.activity;
+package com.timyr.opencv_demo.test;
 
 import android.graphics.Bitmap;
 import android.media.MediaCodec;

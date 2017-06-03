@@ -109,5 +109,6 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="sezeVideo">Максимальное разрешение видеоизображения</string>
-    <string name="minSizeDetect">Минимальный размер изображения</string>
+    <string name="minSizeDetect">Коэффициент минимального размера изображения</string>
+    <string name="scaleFactor">Коэффициент масштабирования</string>
 </resources>

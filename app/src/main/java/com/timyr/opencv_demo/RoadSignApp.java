@@ -8,9 +8,12 @@ public class RoadSignApp extends Application {
     private int widthSize = 900;
     private int heightSize = 500;
     private double minSize = 0.1;
+    private double scaleFactor = 1.1;
+    private int minNeighbors = 4;
+    private boolean colorFilter = true;
     private boolean showSign = false;
-    private boolean showWarSign=false;
-    private boolean showProSign=true;
+    private boolean showWarSign=true;
+    private boolean showProSign=false;
 
 
     public static RoadSignApp getApp(Activity activity) {
@@ -71,5 +74,37 @@ public class RoadSignApp extends Application {
 
     public void setShowProSign(boolean showProSign) {
         this.showProSign = showProSign;
+    }
+
+    public static RoadSignApp getRoadSignApp() {
+        return roadSignApp;
+    }
+
+    public static void setRoadSignApp(RoadSignApp roadSignApp) {
+        RoadSignApp.roadSignApp = roadSignApp;
+    }
+
+    public double getScaleFactor() {
+        return scaleFactor;
+    }
+
+    public void setScaleFactor(double scaleFactor) {
+        this.scaleFactor = scaleFactor;
+    }
+
+    public int getMinNeighbors() {
+        return minNeighbors;
+    }
+
+    public void setMinNeighbors(int minNeighbors) {
+        this.minNeighbors = minNeighbors;
+    }
+
+    public boolean isColorFilter() {
+        return colorFilter;
+    }
+
+    public void setColorFilter(boolean colorFilter) {
+        this.colorFilter = colorFilter;
     }
 }

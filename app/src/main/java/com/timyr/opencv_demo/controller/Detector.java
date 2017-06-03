@@ -5,15 +5,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfDouble;
+import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Size;
 import org.opencv.objdetect.CascadeClassifier;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import com.timyr.opencv_demo.R;
+import com.timyr.opencv_demo.RoadSignApp;
 
 public class Detector {
     private Activity activity;
@@ -23,23 +28,20 @@ public class Detector {
         this.activity = activity;
     }
 
-    private double scaleFactor = 1.1;
-    private int minNeighbors = 3;
     private int flags = 3;
-    private Size min_size = new Size(480,480 );
     int typeCheck = 0;
+
     //	ScaleFactor - параметр, определяющий, насколько уменьшен размер изображения на каждой шкале изображения.(1.1)
 //	MinNeighbors - Параметр, указывающий, сколько соседей должно быть у каждого прямоугольника-кандидата, чтобы сохранить его.(2-3)
 //	Flags - Параметр с тем же значением для старого каскада, что и в функции cvHaarDetectObjects. Он не используется для нового каскада.(0)
-    //minSize – Минимально возможный размер объекта. Объекты меньшего размера игнорируются.
-    public void Detect(Mat mGray, MatOfRect signs, int type,int mAbsoluteFaceSize) {
-        //loadCascadeFile(type, cascadeClassifier);
+    //minSize – Минимально возможный размер объекта. Объекты меньшего размера игнорируются. (30,30)
+    public void Detect(Mat mGray, MatOfRect signs, int type, int mAbsoluteFaceSize) {
         if (typeCheck != type) {
             loadCascadeFile(type);
             typeCheck = type;
         }
-        if (cascadeClassifier != null ) {
-            cascadeClassifier.detectMultiScale(mGray, signs, scaleFactor, minNeighbors, flags, new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size(480,480));
+        if (cascadeClassifier != null) {
+            cascadeClassifier.detectMultiScale(mGray, signs, RoadSignApp.getInstance().getScaleFactor(), RoadSignApp.getInstance().getMinNeighbors(), flags, new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size(480, 480));
         }
     }
 
@@ -80,5 +82,13 @@ public class Detector {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    public static Bitmap convertMatToBitmap(Mat src) {
+        Bitmap bm = Bitmap.createBitmap(src.cols(),
+                src.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(src, bm);
+        //Imgproc.cvtColor(src, dst, code, dstCn)
+        return bm;
     }
 }

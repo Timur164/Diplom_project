@@ -21,11 +21,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.timyr.opencv_demo.R;
-import com.timyr.opencv_demo.activity.RegconitionActivity;
+import com.timyr.opencv_demo.activity.RecognitionActivity;
 import com.timyr.opencv_demo.controller.BaseFragment;
 import com.timyr.opencv_demo.controller.Detector;
 import com.timyr.opencv_demo.controller.Sign;
-import com.timyr.opencv_demo.controller.Utilities;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -55,7 +54,6 @@ public class PhotoFragment extends BaseFragment implements View.OnClickListener 
     private Detector detector;
     public static int pickCode = 1;
     public static int captureCode = 2;
-
     private boolean checkDetect = true;
     private ArrayList<Sign> listSign;
     private int sizeImage = 1500;
@@ -72,7 +70,6 @@ public class PhotoFragment extends BaseFragment implements View.OnClickListener 
         ivDisplay = (ImageView) view.findViewById(R.id.ivDisplay);
         layoutResult = (RelativeLayout) view.findViewById(R.id.layoutResult);
         textNoDetect = (TextView) view.findViewById(R.id.textNoDetect);
-//        btDetect.setVisibility(View.GONE);
         btPhoto.setOnClickListener(this);
         btCapture.setOnClickListener(this);
         btDetect.setOnClickListener(this);
@@ -84,7 +81,7 @@ public class PhotoFragment extends BaseFragment implements View.OnClickListener 
 
     @Override
     public void onResume() {
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, getActivity(), mLoaderCallback);
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, getActivity(), mLoaderCallback);
         super.onResume();
     }
 
@@ -102,7 +99,6 @@ public class PhotoFragment extends BaseFragment implements View.OnClickListener 
             }
         }
     };
-
 
     @Override
     public void onClick(View v) {
@@ -194,18 +190,14 @@ public class PhotoFragment extends BaseFragment implements View.OnClickListener 
         MatOfRect signs = new MatOfRect();
         layoutResult.removeAllViews();
         listSign = new ArrayList<Sign>();
-
         detector.Detect(mGray, signs, 1, 0);
         Rect[] prohibitionArray = signs.toArray();
         Imgproc.cvtColor(photoMat, photoMat, Imgproc.COLOR_RGBA2BGR, 3);
         Draw(prohibitionArray, 1);
-
         detector.Detect(mGray, signs, 2, 0);
         Rect[] dangerArray = signs.toArray();
         Draw(dangerArray, 2);
-
-        //get signs from photo
-        ivDisplay.setImageBitmap(Utilities.convertMatToBitmap(photoMat));
+        ivDisplay.setImageBitmap(Detector.convertMatToBitmap(photoMat));
         checkDetect = true;
         btDetect.setBackgroundResource(android.R.drawable.btn_default);
     }
@@ -225,13 +217,13 @@ public class PhotoFragment extends BaseFragment implements View.OnClickListener 
             ImageView ivv = new ImageView(getActivity());
             ivv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
-            ivv.setImageBitmap(Utilities.convertMatToBitmap(subMat));
+            ivv.setImageBitmap(Detector.convertMatToBitmap(subMat));
             Sign sign;
             if (type == 1) {
-                Sign.myMap.put("Запрещающие знаки" + i, Utilities.convertMatToBitmap(subMat));
+                Sign.myMap.put("Запрещающие знаки" + i, Detector.convertMatToBitmap(subMat));
                 sign = new Sign("unknown", "Запрещающие знаки" + i);
             } else {
-                Sign.myMap.put("Предупреждающие знаки" + i, Utilities.convertMatToBitmap(subMat));
+                Sign.myMap.put("Предупреждающие знаки" + i, Detector.convertMatToBitmap(subMat));
                 sign = new Sign("unknown", "Предупреждающие знаки" + i);
             }
             textNoDetect.setVisibility(View.GONE);
@@ -245,7 +237,7 @@ public class PhotoFragment extends BaseFragment implements View.OnClickListener 
                         toast("Знаки не найдены");
                         return false;
                     }
-                    Intent intent = new Intent(getActivity(), RegconitionActivity.class);
+                    Intent intent = new Intent(getActivity(), RecognitionActivity.class);
                     intent.putParcelableArrayListExtra("key", listSign);
                     startActivity(intent);
                     return false;
@@ -305,21 +297,6 @@ public class PhotoFragment extends BaseFragment implements View.OnClickListener 
             width = (int) (height * bitmapRatio);
         }
         return Bitmap.createScaledBitmap(image, width, height, true);
-    }
-
-    // UPDATED!
-    public String getPath(Uri uri) {
-        String[] projection = {MediaStore.Video.Media.DATA};
-        Cursor cursor = getActivity().managedQuery(uri, projection, null, null, null);
-        if (cursor != null) {
-            // HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
-            // THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } else
-            return null;
     }
 
     // Запись в файл фотки сделанной на камеру

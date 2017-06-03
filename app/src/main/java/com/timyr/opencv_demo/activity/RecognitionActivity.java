@@ -12,7 +12,7 @@ import com.timyr.opencv_demo.controller.Sign;
 
 import java.util.ArrayList;
 
-public class RegconitionActivity extends Activity {
+public class RecognitionActivity extends Activity {
     private ArrayList<Sign> listSign;
     private itemAdapter adapter;
 
@@ -30,7 +30,7 @@ public class RegconitionActivity extends Activity {
             textView.setVisibility(View.GONE);
             list.setVisibility(View.VISIBLE);
         }
-        adapter = new itemAdapter(listSign, RegconitionActivity.this);
+        adapter = new itemAdapter(listSign, RecognitionActivity.this);
         list.setAdapter(adapter);
     }
 
